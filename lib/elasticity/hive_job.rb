@@ -30,6 +30,7 @@ module Elasticity
       end
       jobflow_config = {
         :name => @name,
+        :ami_version => '2.0',
         :instances => {
           :ec2_key_name => @ec2_key_name,
           :hadoop_version => @hadoop_version,
