@@ -18,7 +18,7 @@ module Elasticity
       @aws_access_key_id = aws_access_key_id
       @aws_secret_access_key = aws_secret_access_key
       @ec2_key_name = "default"
-      @hadoop_version = "0.20"
+      @hadoop_version = "0.20.205"
       @instance_count = 2
       @master_instance_type = "m1.small"
       @name = "Elasticity Job"

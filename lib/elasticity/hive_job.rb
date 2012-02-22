@@ -30,7 +30,7 @@ module Elasticity
       end
       jobflow_config = {
         :name => @name,
-        :ami_version => '2.0',
+        :ami_version => 'latest',
         :instances => {
           :ec2_key_name => @ec2_key_name,
           :hadoop_version => @hadoop_version,
@@ -67,7 +67,56 @@ module Elasticity
       
       @emr.run_job_flow(jobflow_config)
     end
+    
+    def run_multiple(hive_script_to_vars)
+      steps = [
+        {
+          :action_on_failure => "TERMINATE_JOB_FLOW",
+          :hadoop_jar_step => {
+            :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+            :args => [
+              "s3://elasticmapreduce/libs/hive/hive-script",
+                "--base-path", "s3://elasticmapreduce/libs/hive/",
+                "--install-hive",
+                "--hive-versions", "0.7.1.1"
+            ],
+          },
+          :name => "Setup Hive"
+        }
+      ]
+      hive_script_to_vars.each_pair do |hive_script, hive_variables|
+        script_arguments = ["s3://elasticmapreduce/libs/hive/hive-script", "--run-hive-script", "--args"]
+        script_arguments.concat(["-f", hive_script])
+        hive_variables.each do |variable_name, value|
+          script_arguments.concat(["-d", "#{variable_name}=#{value}"])
+        end
+        
+        steps << {
+          :action_on_failure => @action_on_failure,
+          :hadoop_jar_step => {
+            :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+            :args => script_arguments,
+          },
+          :name => "Run Hive Script"
+        }
+        
+      end
+      jobflow_config = {
+        :name => @name,
+        :ami_version => 'latest',
+        :instances => {
+          :ec2_key_name => @ec2_key_name,
+          :hadoop_version => @hadoop_version,
+          :instance_count => @instance_count,
+          :master_instance_type => @master_instance_type,
+          :slave_instance_type => @slave_instance_type,
+        },
+        :steps => steps
+      }
 
+      jobflow_config.merge!(:log_uri => @log_uri) if @log_uri
+      
+      @emr.run_job_flow(jobflow_config)
+    end
   end
-
 end
