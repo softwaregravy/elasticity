@@ -30,7 +30,7 @@ module Elasticity
       end
       jobflow_config = {
         :name => @name,
-        :ami_version => '2.0',
+        :ami_version => 'latest',
         :instances => {
           :ec2_key_name => @ec2_key_name,
           :hadoop_version => @hadoop_version,
@@ -47,7 +47,7 @@ module Elasticity
                 "s3://elasticmapreduce/libs/hive/hive-script",
                   "--base-path", "s3://elasticmapreduce/libs/hive/",
                   "--install-hive",
-                  "--hive-versions", "0.7.1.1"
+                  "--hive-versions", "0.7.1.3"
               ],
             },
             :name => "Setup Hive"
@@ -78,7 +78,7 @@ module Elasticity
               "s3://elasticmapreduce/libs/hive/hive-script",
                 "--base-path", "s3://elasticmapreduce/libs/hive/",
                 "--install-hive",
-                "--hive-versions", "0.7.1.1"
+                "--hive-versions", "0.7.1.3"
             ],
           },
           :name => "Setup Hive"
@@ -103,7 +103,7 @@ module Elasticity
       end
       jobflow_config = {
         :name => @name,
-        :ami_version => '2.0',
+        :ami_version => 'latest',
         :instances => {
           :ec2_key_name => @ec2_key_name,
           :hadoop_version => @hadoop_version,
