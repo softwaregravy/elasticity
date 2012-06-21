@@ -17,6 +17,7 @@ module Elasticity
 
       signed_params = sign_params(params, "GET", host, "/")
       signed_request = "#{protocol}://#{host}?#{signed_params}"
+      puts "Elasticity generated request: #{signed_request}"
       RestClient.get signed_request
     end
 
